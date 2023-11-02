@@ -1,10 +1,10 @@
 # %%
-from .GaussianPointCloudScene import GaussianPointCloudScene
-from .ImagePoseDataset import ImagePoseDataset
-from .Camera import CameraInfo
-from .GaussianPointCloudRasterisation import GaussianPointCloudRasterisation
-from .GaussianPointAdaptiveController import GaussianPointAdaptiveController
-from .LossFunction import LossFunction
+from GaussianPointCloudScene import GaussianPointCloudScene
+from ImagePoseDataset import ImagePoseDataset
+from Camera import CameraInfo
+from GaussianPointCloudRasterisation import GaussianPointCloudRasterisation
+from GaussianPointAdaptiveController import GaussianPointAdaptiveController
+from LossFunction import LossFunction
 import torch
 import argparse
 from dataclass_wizard import YAMLWizard
