@@ -5,10 +5,10 @@ import torch
 import torch.utils.data
 import torchvision
 import torchvision.transforms as transforms
-from .Camera import CameraInfo
+from Camera import CameraInfo
 from typing import Any
-from .utils import SE3_to_quaternion_and_translation_torch
-from .GaussianPointCloudRasterisation import TILE_WIDTH, TILE_HEIGHT
+from utils import SE3_to_quaternion_and_translation_torch
+from GaussianPointCloudRasterisation import TILE_WIDTH, TILE_HEIGHT
 
 MAX_RESOLUTION_TRAIN=1600
 
