@@ -342,7 +342,7 @@ def gaussian_point_rasterisation(
     rgb_only: ti.template(),  # input
 
     # Kaamiiaar
-    pixel_to_gaussians: ti.template(),  # output
+    pixel_to_gaussians: ti.types.ndarray(ti.i32, ndim=2),  # (H*W, 2)
 ):
     ti.loop_config(block_dim=(TILE_WIDTH * TILE_HEIGHT))
     
@@ -425,7 +425,7 @@ def gaussian_point_rasterisation(
             ti.simt.block.sync()
             max_point_group_offset: ti.i32 = ti.min(
                 ti.static(TILE_WIDTH * TILE_HEIGHT), num_points_in_tile - point_group_id * ti.static(TILE_WIDTH * TILE_HEIGHT))
-            for point_group_offset in range(max_point_group_offset):
+            for i, point_group_offset in enumerate(range(max_point_group_offset)):
                 if pixel_saturated:
                     break
                 # forward rendering process
@@ -467,7 +467,7 @@ def gaussian_point_rasterisation(
                 accumulated_color += color * alpha * T_i
 
                 # Kaamiiaar
-                pixel_to_gaussians.append((offset_of_last_effective_point, alpha))
+                pixel_to_gaussians[i] = ti.math.vec2([offset_of_last_effective_point, alpha])
 
                 if not rgb_only:
                     # Weighted depth for all valid points.
@@ -812,7 +812,7 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
         color_max_sh_band: int = 2
 
         # Kaamiiaar
-        pixel_to_gaussians: List = []
+        pixel_to_gaussians: torch.Tensor = None
 
     @dataclass
     class BackwardValidPointHookInput:
