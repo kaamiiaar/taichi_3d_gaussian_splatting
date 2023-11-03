@@ -19,6 +19,9 @@ from SphericalHarmonics import SphericalHarmonics, vec16f
 from typing import List, Tuple, Optional, Callable, Union
 from dataclass_wizard import YAMLWizard
 
+# Kaamiiaar
+MAX_GAUSSIANS = 221
+bitmasked_field = None
 
 mat4x4f = ti.types.matrix(n=4, m=4, dtype=ti.f32)
 mat4x3f = ti.types.matrix(n=4, m=3, dtype=ti.f32)
@@ -341,11 +344,13 @@ def gaussian_point_rasterisation(
     pixel_valid_point_count: ti.types.ndarray(ti.i32, ndim=2),  # output
     rgb_only: ti.template(),  # input
 
-    # Kaamiiaar
-    # pixel_to_gaussians: ti.types.ndarray(ti.i32, ndim=2),  # (H*W, 2)
 ):
     ti.loop_config(block_dim=(TILE_WIDTH * TILE_HEIGHT))
     
+    # Kamyar
+    global bitmasked_field
+    bitmasked_field = ti.bitmasked(ti.i32, shape=(camera_height, camera_width, MAX_GAUSSIANS))
+
     for pixel_offset in ti.ndrange(camera_height * camera_width):  # 1920*1080
         # initialize
         # put each TILE_WIDTH * TILE_HEIGHT tile in the same CUDA thread group (block)
@@ -467,7 +472,8 @@ def gaussian_point_rasterisation(
                 accumulated_color += color * alpha * T_i
 
                 # Kaamiiaar
-                # pixel_to_gaussians[pixel_idx] = ti.math.vec2([offset_of_last_effective_point, alpha])
+                if valid_point_count < MAX_GAUSSIANS:
+                    bitmasked_field[pixel_v, pixel_u, valid_point_count] = offset_of_last_effective_point
 
                 if not rgb_only:
                     # Weighted depth for all valid points.
@@ -813,7 +819,6 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
         color_max_sh_band: int = 2
 
         # Kaamiiaar
-        # pixel_to_gaussians: torch.Tensor = None
 
     @dataclass
     class BackwardValidPointHookInput:
@@ -851,7 +856,7 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
                         color_max_sh_band,
 
                         # Kaamiiaar
-                        # pixel_to_gaussians,
+
                         ):
                 point_in_camera_mask = torch.zeros(
                     size=(pointcloud.shape[0],), dtype=torch.int8, device=pointcloud.device)
@@ -1012,7 +1017,6 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
                         pixel_valid_point_count=pixel_valid_point_count,
                         
                         # Kaamiiaar
-                        # pixel_to_gaussians=pixel_to_gaussians,
                     )
                 ctx.save_for_backward(
                     pointcloud,
@@ -1041,8 +1045,7 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
                 # rasterized_image.requires_grad_(True)
 
                 # Kaamiiaar
-                # return rasterized_image, rasterized_depth, pixel_valid_point_count, pixel_to_gaussians
-                return rasterized_image, rasterized_depth, pixel_valid_point_count
+                return rasterized_image, rasterized_depth, pixel_valid_point_count, bitmasked_field
 
             @staticmethod
             def backward(ctx, grad_rasterized_image, grad_rasterized_depth, grad_pixel_valid_point_count):
@@ -1214,7 +1217,6 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
         camera_info = input_data.camera_info
 
         # Kaamiiaar
-        # pixel_to_gaussians = input_data.pixel_to_gaussians
 
         assert camera_info.camera_width % TILE_WIDTH == 0
         assert camera_info.camera_height % TILE_HEIGHT == 0
@@ -1229,5 +1231,4 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
             color_max_sh_band,
 
             # Kaamiiaar
-            # pixel_to_gaussians,
         )
