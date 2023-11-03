@@ -361,6 +361,18 @@ def gaussian_point_rasterisation(
             tile_id * (TILE_WIDTH * TILE_HEIGHT)
         pixel_u = tile_u * TILE_WIDTH + pixel_offset_in_tile % TILE_WIDTH
         pixel_v = tile_v * TILE_HEIGHT + pixel_offset_in_tile // TILE_WIDTH
+
+        # Kaamiiaar
+        # check if the pixel is masked
+        pixel_is_inside = False
+        if mask_2d is not None:
+            assert pixel_v < mask_2d.shape[0] and pixel_u < mask_2d.shape[1], f"pixel_v: {pixel_v}, pixel_u: {pixel_u}, mask_2d.shape: {mask_2d.shape}"
+
+            if mask_2d[pixel_v, pixel_u] == 1:
+                pixel_is_inside = True
+                # Create an empty list for the pixel to store the contributing guassians
+                pixel_to_gaussians[(pixel_u, pixel_v)] = []
+      
         start_offset = tile_points_start[tile_id]
         end_offset = tile_points_end[tile_id]
         # The initial value of accumulated alpha (initial value of accumulated multiplication)
@@ -468,7 +480,7 @@ def gaussian_point_rasterisation(
 
                 # Kaamiiaar
                 if pixel_is_inside:
-                    # keep the main descriptor of the 3d point
+                    # store the main descriptor of the 3d point
                     pixel_to_gaussians[pixel_offset].append(
                         (offset_of_last_effective_point, alpha))
 
@@ -816,7 +828,7 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
 
         # Kaamiiaar
         mask_2d: torch.Tensor = None
-        pixel_to_gaussians: dict = {}
+        pixel_to_gaussians: dict = None
 
     @dataclass
     class BackwardValidPointHookInput:
