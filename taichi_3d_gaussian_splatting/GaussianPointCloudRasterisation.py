@@ -469,7 +469,7 @@ def gaussian_point_rasterisation(
 
                 # Kaamiiaar
                 if valid_point_count < MAX_GAUSSIANS:
-                    pixel_to_gaussians[pixel_v, pixel_u][valid_point_count] = offset_of_last_effective_point
+                    pixel_to_gaussians[pixel_offset, valid_point_count] = offset_of_last_effective_point
 
                 if not rgb_only:
                     # Weighted depth for all valid points.
@@ -993,9 +993,8 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
                     camera_info.camera_height, camera_info.camera_width, dtype=torch.int32, device=pointcloud.device)
                 # print(f"num_points: {pointcloud.shape[0]}, num_points_in_camera: {num_points_in_camera}, num_points_rendered: {point_in_camera_sort_key.shape[0]}")
 
-
                 # Kamyar
-                pixel_to_gaussians = ti.Vector.field(MAX_GAUSSIANS, dtype=ti.i32, shape=(camera_info.camera_height, camera_info.camera_width))
+                pixel_to_gaussians = ti.field(dtype=ti.i32, shape=(camera_info.camera_height*camera_info.camera_width, MAX_GAUSSIANS))
 
                 # Step 5: render
                 if point_in_camera_sort_key.shape[0] > 0:
