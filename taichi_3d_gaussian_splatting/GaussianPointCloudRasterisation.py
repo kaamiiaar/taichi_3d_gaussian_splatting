@@ -864,6 +864,10 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
                         t_pointcloud_camera,
                         camera_info,
                         color_max_sh_band,
+
+                        # Kaamiiaar
+                        mask_2d,
+                        pixel_to_gaussians,
                         ):
                 point_in_camera_mask = torch.zeros(
                     size=(pointcloud.shape[0],), dtype=torch.int8, device=pointcloud.device)
