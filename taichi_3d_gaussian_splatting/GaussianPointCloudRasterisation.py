@@ -829,7 +829,7 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
 
         # Kaamiiaar
         mask_2d: torch.Tensor = torch.tensor([])  # (H, W)
-        pixel_to_gaussians: dict = None
+        pixel_to_gaussians: default_factory = dict
 
     @dataclass
     class BackwardValidPointHookInput:
