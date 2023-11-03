@@ -1230,8 +1230,8 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
         camera_info = input_data.camera_info
 
         # Kaamiiaar
-        mask_2d = mask_2d
-        pixel_to_gaussians=pixel_to_gaussians
+        mask_2d = input_data.mask_2d
+        pixel_to_gaussians = input_data.pixel_to_gaussians
 
         assert camera_info.camera_width % TILE_WIDTH == 0
         assert camera_info.camera_height % TILE_HEIGHT == 0
