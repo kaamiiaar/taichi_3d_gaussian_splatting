@@ -366,7 +366,6 @@ def gaussian_point_rasterisation(
         # check if the pixel is masked
         pixel_is_inside = False
         if mask_2d.shape[0] == camera_height and mask_2d.shape[1] == camera_width and mask_2d[pixel_v, pixel_u] == 1:
-            print(camera_height, camera_width, mask_2d.shape)
             pixel_is_inside = True
             # Create an empty list for the pixel to store the contributing guassians
             pixel_to_gaussians[(pixel_u, pixel_v)] = []
