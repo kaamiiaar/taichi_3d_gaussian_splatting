@@ -1224,6 +1224,11 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
         t_pointcloud_camera = input_data.t_pointcloud_camera
         color_max_sh_band = input_data.color_max_sh_band
         camera_info = input_data.camera_info
+
+        # Kaamiiaar
+        mask_2d = mask_2d
+        pixel_to_gaussians=pixel_to_gaussians
+
         assert camera_info.camera_width % TILE_WIDTH == 0
         assert camera_info.camera_height % TILE_HEIGHT == 0
         return self._module_function.apply(
@@ -1235,4 +1240,8 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
             t_pointcloud_camera,
             camera_info,
             color_max_sh_band,
+
+            # Kaamiiaar
+            mask_2d,
+            pixel_to_gaussians,
         )
