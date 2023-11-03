@@ -348,10 +348,6 @@ def gaussian_point_rasterisation(
 
 ):
     ti.loop_config(block_dim=(TILE_WIDTH * TILE_HEIGHT))
-    
-    # Kamyar
-    bitmasked_field = ti.bitmasked(ti.i32, shape=(camera_height, camera_width, MAX_GAUSSIANS))
-
     for pixel_offset in ti.ndrange(camera_height * camera_width):  # 1920*1080
         # initialize
         # put each TILE_WIDTH * TILE_HEIGHT tile in the same CUDA thread group (block)
@@ -819,7 +815,6 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
         t_pointcloud_camera: torch.Tensor
 
         # Kaamiiaar
-        bitmasked_field: torch.Tensor # (H, W, MAX_GAUSSIANS)
         
         color_max_sh_band: int = 2
 
@@ -860,8 +855,6 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
                         color_max_sh_band,
 
                         # Kaamiiaar
-                        bitmasked_field,
-
                         ):
                 point_in_camera_mask = torch.zeros(
                     size=(pointcloud.shape[0],), dtype=torch.int8, device=pointcloud.device)
@@ -1000,6 +993,10 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
                 pixel_valid_point_count = torch.empty(
                     camera_info.camera_height, camera_info.camera_width, dtype=torch.int32, device=pointcloud.device)
                 # print(f"num_points: {pointcloud.shape[0]}, num_points_in_camera: {num_points_in_camera}, num_points_rendered: {point_in_camera_sort_key.shape[0]}")
+
+
+                # Kamyar
+                bitmasked_field = ti.bitmasked(ti.i32, shape=(camera_info.camera_height, camera_info.camera_width, MAX_GAUSSIANS))
 
                 # Step 5: render
                 if point_in_camera_sort_key.shape[0] > 0:
@@ -1223,7 +1220,6 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
         camera_info = input_data.camera_info
 
         # Kaamiiaar
-        bitmasked_field = input_data.bitmasked_field
 
         assert camera_info.camera_width % TILE_WIDTH == 0
         assert camera_info.camera_height % TILE_HEIGHT == 0
@@ -1238,5 +1234,4 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
             color_max_sh_band,
 
             # Kaamiiaar
-            bitmasked_field,
         )
