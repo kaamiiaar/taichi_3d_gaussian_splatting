@@ -372,6 +372,9 @@ def gaussian_point_rasterisation(
         offset_of_last_effective_point = start_offset
         valid_point_count: ti.i32 = 0
 
+        # Kaamiiaar
+        n_contributing_points = 0
+
         # open the shared memory
         tile_point_uv = ti.simt.block.SharedArray(
             (2, ti.static(TILE_WIDTH * TILE_HEIGHT)), dtype=ti.f32)
@@ -469,8 +472,8 @@ def gaussian_point_rasterisation(
 
                 # Kaamiiaar
                 if valid_point_count < MAX_GAUSSIANS:
-                    pixel_to_gaussians[pixel_offset, valid_point_count] = offset_of_last_effective_point
-                    valid_point_count += 1
+                    pixel_to_gaussians[pixel_offset, n_contributing_points] = offset_of_last_effective_point
+                    n_contributing_points += 1
 
                 if not rgb_only:
                     # Weighted depth for all valid points.
