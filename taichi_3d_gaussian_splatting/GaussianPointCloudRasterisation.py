@@ -20,7 +20,7 @@ from typing import List, Tuple, Optional, Callable, Union
 from dataclass_wizard import YAMLWizard
 
 # Kaamiiaar
-MAX_GAUSSIANS = 221
+MAX_GAUSSIANS = 30
 
 mat4x4f = ti.types.matrix(n=4, m=4, dtype=ti.f32)
 mat4x3f = ti.types.matrix(n=4, m=3, dtype=ti.f32)
