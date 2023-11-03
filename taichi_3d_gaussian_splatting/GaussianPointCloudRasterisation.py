@@ -365,10 +365,12 @@ def gaussian_point_rasterisation(
         # Kaamiiaar
         # check if the pixel is masked
         pixel_is_inside = False
+        assert False, mask_2d.shape, camera_height, camera_width
         if mask_2d.shape[0] == camera_height and mask_2d.shape[1] == camera_width and mask_2d[pixel_v, pixel_u] == 1:
             pixel_is_inside = True
             # Create an empty list for the pixel to store the contributing guassians
-            pixel_to_gaussians[(pixel_u, pixel_v)] = []
+            if (pixel_u, pixel_v) not in pixel_to_gaussians:
+                pixel_to_gaussians[(pixel_u, pixel_v)] = []
       
         start_offset = tile_points_start[tile_id]
         end_offset = tile_points_end[tile_id]
