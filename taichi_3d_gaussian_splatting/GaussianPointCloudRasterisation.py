@@ -827,8 +827,8 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
         color_max_sh_band: int = 2
 
         # Kaamiiaar
-        mask_2d: torch.Tensor = None
-        pixel_to_gaussians: dict = None
+        mask2d: torch.Tensor = None
+        pixelToGaussians: dict = None
 
     @dataclass
     class BackwardValidPointHookInput:
@@ -1230,8 +1230,8 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
         camera_info = input_data.camera_info
 
         # Kaamiiaar
-        mask_2d = input_data.mask_2d
-        pixel_to_gaussians = input_data.pixel_to_gaussians
+        mask_2d = input_data.mask2d
+        pixel_to_gaussians = input_data.pixelToGaussians
 
         assert camera_info.camera_width % TILE_WIDTH == 0
         assert camera_info.camera_height % TILE_HEIGHT == 0
