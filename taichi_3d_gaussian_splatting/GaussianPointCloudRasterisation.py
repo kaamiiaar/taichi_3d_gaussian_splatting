@@ -344,7 +344,7 @@ def gaussian_point_rasterisation(
     rgb_only: ti.template(),  # input
 
     # Kaamiiaar
-    bitmasked_field: ti.types.ndarray(ti.i32, ndim=3),  # (H, W, MAX_GAUSSIANS)
+    pixel_to_gaussians: ti.types.ndarray(ti.i32, ndim=3),  # (H, W, MAX_GAUSSIANS)
 
 ):
     ti.loop_config(block_dim=(TILE_WIDTH * TILE_HEIGHT))
@@ -470,7 +470,7 @@ def gaussian_point_rasterisation(
 
                 # Kaamiiaar
                 if valid_point_count < MAX_GAUSSIANS:
-                    bitmasked_field[pixel_v, pixel_u, valid_point_count] = offset_of_last_effective_point
+                    pixel_to_gaussians[pixel_v, pixel_u][valid_point_count] = offset_of_last_effective_point
 
                 if not rgb_only:
                     # Weighted depth for all valid points.
@@ -996,7 +996,7 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
 
 
                 # Kamyar
-                bitmasked_field = ti.bitmasked(ti.i32, shape=(camera_info.camera_height, camera_info.camera_width, MAX_GAUSSIANS))
+                pixel_to_gaussians = ti.Vector.field(MAX_GAUSSIANS, dtype=ti.i32, shape=(camera_info.camera_height, camera_info.camera_width))
 
                 # Step 5: render
                 if point_in_camera_sort_key.shape[0] > 0:
@@ -1019,7 +1019,7 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
                         pixel_valid_point_count=pixel_valid_point_count,
                         
                         # Kaamiiaar
-                        bitmasked_field=bitmasked_field,
+                        pixel_to_gaussians=pixel_to_gaussians,
                     )
                 ctx.save_for_backward(
                     pointcloud,
@@ -1048,7 +1048,7 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
                 # rasterized_image.requires_grad_(True)
 
                 # Kaamiiaar
-                return rasterized_image, rasterized_depth, pixel_valid_point_count, bitmasked_field
+                return rasterized_image, rasterized_depth, pixel_valid_point_count, pixel_to_gaussians
 
             @staticmethod
             def backward(ctx, grad_rasterized_image, grad_rasterized_depth, grad_pixel_valid_point_count):
