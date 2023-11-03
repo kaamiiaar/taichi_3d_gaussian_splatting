@@ -817,10 +817,12 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
         q_pointcloud_camera: torch.Tensor
         # Kx3, x to the right, y down, z forward, K is the number of objects
         t_pointcloud_camera: torch.Tensor
-        color_max_sh_band: int = 2
 
         # Kaamiiaar
-        bitmasked_field: torch.Tensor  # (H, W, MAX_GAUSSIANS)
+        bitmasked_field: torch.Tensor # (H, W, MAX_GAUSSIANS)
+        
+        color_max_sh_band: int = 2
+
 
     @dataclass
     class BackwardValidPointHookInput:
