@@ -365,7 +365,8 @@ def gaussian_point_rasterisation(
         # Kaamiiaar
         # check if the pixel is masked
         pixel_is_inside = False
-        if mask_2d is not None:
+        assert len(mask_2d.shape)==2, f"mask shape should be (H,W)"
+        if len(mask_2d.shape)==2:
             assert pixel_v < mask_2d.shape[0] and pixel_u < mask_2d.shape[1], f"pixel_v: {pixel_v}, pixel_u: {pixel_u}, mask_2d.shape: {mask_2d.shape}"
 
             if mask_2d[pixel_v, pixel_u] == 1:
@@ -827,8 +828,8 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
         color_max_sh_band: int = 2
 
         # Kaamiiaar
-        mask_2d: torch.Tensor = None
-        pixel_to_gaussians: dict = None
+        mask_2d: torch.Tensor = torch.tensor([])  # (H, W)
+        pixel_to_gaussians: dict = {}
 
     @dataclass
     class BackwardValidPointHookInput:
