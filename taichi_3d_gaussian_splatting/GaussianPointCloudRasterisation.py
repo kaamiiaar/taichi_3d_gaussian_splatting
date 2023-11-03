@@ -365,7 +365,7 @@ def gaussian_point_rasterisation(
         # Kaamiiaar
         # check if the pixel is masked
         pixel_is_inside = False
-        
+
         if mask_2d.shape[0] == camera_height and mask_2d.shape[1] == camera_width:
             if mask_2d[pixel_v, pixel_u] == 1:
                 pixel_is_inside = True
@@ -826,7 +826,7 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
         color_max_sh_band: int = 2
 
         # Kaamiiaar
-        mask_2d: torch.Tensor = torch.tensor([])  # (H, W)
+        mask_2d: torch.Tensor = torch.tensor([[]])  # (H, W)
         pixel_to_gaussians: dict = None
 
     @dataclass
