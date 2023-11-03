@@ -344,8 +344,7 @@ def gaussian_point_rasterisation(
     rgb_only: ti.template(),  # input
 
     # Kaamiiaar
-    pixel_to_gaussians,  # (H, W, MAX_GAUSSIANS)
-
+    pixel_to_gaussians: ti.types.ndarray(ti.i32, ndim=2),  # (H, W, MAX_GAUSSIANS)
 ):
     ti.loop_config(block_dim=(TILE_WIDTH * TILE_HEIGHT))
     for pixel_offset in ti.ndrange(camera_height * camera_width):  # 1920*1080
