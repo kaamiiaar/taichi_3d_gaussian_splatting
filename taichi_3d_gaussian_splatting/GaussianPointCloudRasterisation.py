@@ -470,8 +470,9 @@ def gaussian_point_rasterisation(
                 # Kaamiiaar
                 if valid_point_count < MAX_GAUSSIANS:
                     pixel_to_gaussians[pixel_offset, valid_point_count] = offset_of_last_effective_point
+                    print(f"pixel_to_gaussians[{pixel_offset}, {valid_point_count}] = {offset_of_last_effective_point}")
                     valid_point_count += 1
-                    
+
                 if not rgb_only:
                     # Weighted depth for all valid points.
                     depth = tile_point_depth[point_group_offset]
