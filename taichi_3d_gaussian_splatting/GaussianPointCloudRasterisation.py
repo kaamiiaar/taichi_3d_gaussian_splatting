@@ -342,8 +342,8 @@ def gaussian_point_rasterisation(
     rgb_only: ti.template(),  # input
 
     # Kaamiiaar
-    mask_2d: ti.types.ndarray(ti.i32, ndim=2) = None,  # (H, W)
-    pixel_to_gaussians: ti.template() = None,
+    mask_2d: ti.types.ndarray(ti.i32, ndim=2),  # (H, W)
+    pixel_to_gaussians: ti.template(),
 ):
     ti.loop_config(block_dim=(TILE_WIDTH * TILE_HEIGHT))
     
