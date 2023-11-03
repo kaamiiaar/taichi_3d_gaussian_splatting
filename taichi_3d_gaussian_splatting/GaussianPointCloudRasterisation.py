@@ -344,7 +344,7 @@ def gaussian_point_rasterisation(
     rgb_only: ti.template(),  # input
 
     # Kaamiiaar
-    pixel_to_gaussians: ti.types.compound_types.taichi.Field
+    pixel_to_gaussians: ti.types.ndarray(ti.i32, ndim=2),  # (H*W, MAX_GAUSSIANS)
 ):
     ti.loop_config(block_dim=(TILE_WIDTH * TILE_HEIGHT))
     for pixel_offset in ti.ndrange(camera_height * camera_width):  # 1920*1080
@@ -995,8 +995,9 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
                 # print(f"num_points: {pointcloud.shape[0]}, num_points_in_camera: {num_points_in_camera}, num_points_rendered: {point_in_camera_sort_key.shape[0]}")
 
                 # Kamyar
-                pixel_to_gaussians = ti.field(dtype=ti.i32, shape=(camera_info.camera_height*camera_info.camera_width, MAX_GAUSSIANS))
+                # pixel_to_gaussians = ti.field(dtype=ti.i32, shape=(camera_info.camera_height*camera_info.camera_width, MAX_GAUSSIANS))
                 # pixel_to_gaussians = ti.Matrix(camera_info.camera_height*camera_info.camera_width, MAX_GAUSSIANS, dt=ti.i32)
+                pixel_to_gaussians = torch.zeros(size=(camera_info.camera_height*camera_info.camera_width, MAX_GAUSSIANS), dtype=torch.int32, device=pointcloud.device)
 
                 # Step 5: render
                 if point_in_camera_sort_key.shape[0] > 0:
