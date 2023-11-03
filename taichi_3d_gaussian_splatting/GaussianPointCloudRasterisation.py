@@ -20,7 +20,7 @@ from typing import List, Tuple, Optional, Callable, Union
 from dataclass_wizard import YAMLWizard
 
 # Kaamiiaar
-MAX_GAUSSIANS = 1
+MAX_GAUSSIANS = 10
 
 mat4x4f = ti.types.matrix(n=4, m=4, dtype=ti.f32)
 mat4x3f = ti.types.matrix(n=4, m=3, dtype=ti.f32)
@@ -470,7 +470,6 @@ def gaussian_point_rasterisation(
                 # Kaamiiaar
                 if valid_point_count < MAX_GAUSSIANS:
                     pixel_to_gaussians[pixel_offset, valid_point_count] = offset_of_last_effective_point
-                    print(f"pixel_to_gaussians[{pixel_offset}, {valid_point_count}] = {offset_of_last_effective_point}")
                     valid_point_count += 1
 
                 if not rgb_only:
