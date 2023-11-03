@@ -21,7 +21,6 @@ from dataclass_wizard import YAMLWizard
 
 # Kaamiiaar
 MAX_GAUSSIANS = 221
-bitmasked_field = None
 
 mat4x4f = ti.types.matrix(n=4, m=4, dtype=ti.f32)
 mat4x3f = ti.types.matrix(n=4, m=3, dtype=ti.f32)
@@ -344,11 +343,13 @@ def gaussian_point_rasterisation(
     pixel_valid_point_count: ti.types.ndarray(ti.i32, ndim=2),  # output
     rgb_only: ti.template(),  # input
 
+    # Kaamiiaar
+    bitmasked_field: ti.types.ndarray(ti.i32, ndim=3),  # (H, W, MAX_GAUSSIANS)
+
 ):
     ti.loop_config(block_dim=(TILE_WIDTH * TILE_HEIGHT))
     
     # Kamyar
-    global bitmasked_field
     bitmasked_field = ti.bitmasked(ti.i32, shape=(camera_height, camera_width, MAX_GAUSSIANS))
 
     for pixel_offset in ti.ndrange(camera_height * camera_width):  # 1920*1080
@@ -819,6 +820,7 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
         color_max_sh_band: int = 2
 
         # Kaamiiaar
+        bitmasked_field: torch.Tensor  # (H, W, MAX_GAUSSIANS)
 
     @dataclass
     class BackwardValidPointHookInput:
@@ -856,6 +858,7 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
                         color_max_sh_band,
 
                         # Kaamiiaar
+                        bitmasked_field,
 
                         ):
                 point_in_camera_mask = torch.zeros(
@@ -1017,6 +1020,7 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
                         pixel_valid_point_count=pixel_valid_point_count,
                         
                         # Kaamiiaar
+                        bitmasked_field=bitmasked_field,
                     )
                 ctx.save_for_backward(
                     pointcloud,
@@ -1217,6 +1221,7 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
         camera_info = input_data.camera_info
 
         # Kaamiiaar
+        bitmasked_field = input_data.bitmasked_field
 
         assert camera_info.camera_width % TILE_WIDTH == 0
         assert camera_info.camera_height % TILE_HEIGHT == 0
@@ -1231,4 +1236,5 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
             color_max_sh_band,
 
             # Kaamiiaar
+            bitmasked_field,
         )
