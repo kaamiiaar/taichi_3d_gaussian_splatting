@@ -477,7 +477,6 @@ def gaussian_point_rasterisation(
                     valid_point_count += 1
                 T_i = next_T_i
 
-                pixel_idx += 1
             # end of point group loop
 
         # end of point group id loop
