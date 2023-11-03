@@ -469,7 +469,7 @@ def gaussian_point_rasterisation(
 
                 # Kaamiiaar
                 if valid_point_count < MAX_GAUSSIANS:
-                    pixel_to_gaussians[pixel_v, pixel_u, valid_point_count] = offset_of_last_effective_point
+                    pixel_to_gaussians[pixel_v, pixel_u][valid_point_count] = offset_of_last_effective_point
 
                 if not rgb_only:
                     # Weighted depth for all valid points.
