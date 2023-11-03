@@ -365,10 +365,8 @@ def gaussian_point_rasterisation(
         # Kaamiiaar
         # check if the pixel is masked
         pixel_is_inside = False
-        assert len(mask_2d.shape)==2, f"mask shape should be (H,W)"
-        if len(mask_2d.shape)==2:
-            assert pixel_v < mask_2d.shape[0] and pixel_u < mask_2d.shape[1], f"pixel_v: {pixel_v}, pixel_u: {pixel_u}, mask_2d.shape: {mask_2d.shape}"
-
+        
+        if mask_2d.shape[0] == camera_height and mask_2d.shape[1] == camera_width:
             if mask_2d[pixel_v, pixel_u] == 1:
                 pixel_is_inside = True
                 # Create an empty list for the pixel to store the contributing guassians
