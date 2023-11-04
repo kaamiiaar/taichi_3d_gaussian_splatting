@@ -347,6 +347,7 @@ def gaussian_point_rasterisation(
     point_id_in_camera_list: ti.types.ndarray(ti.i32, ndim=1),  # (M)
     pixel_to_gaussians: ti.types.ndarray(ti.i32, ndim=2),  # (H*W, MAX_GAUSSIANS)
     alpha_values: ti.types.ndarray(ti.f32, ndim=2),  # (H*W, MAX_GAUSSIANS)
+    max_gaussians_per_pixel: ti.i32,  # scalar
 ):
     ti.loop_config(block_dim=(TILE_WIDTH * TILE_HEIGHT))
     for pixel_offset in ti.ndrange(camera_height * camera_width):  # 1920*1080
@@ -476,7 +477,7 @@ def gaussian_point_rasterisation(
                 point_id = point_id_in_camera_list[point_offset]
 
                 # Kaamiiaar
-                if valid_point_count < MAX_GAUSSIANS:
+                if valid_point_count < max_gaussians_per_pixel:
                     pixel_to_gaussians[pixel_offset, n_contributing_points] = point_id
                     alpha_values[pixel_offset, n_contributing_points] = alpha
                     n_contributing_points += 1
@@ -1034,6 +1035,7 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
                         pixel_to_gaussians=pixel_to_gaussians,
                         point_id_in_camera_list=point_id_in_camera_list,
                         alpha_values=alpha_values,
+                        max_gaussian_per_pixel=self.config.max_gaussian_per_pixel,
                     )
                 ctx.save_for_backward(
                     pointcloud,
