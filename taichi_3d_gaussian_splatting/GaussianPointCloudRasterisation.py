@@ -344,6 +344,7 @@ def gaussian_point_rasterisation(
     rgb_only: ti.template(),  # input
 
     # Kaamiiaar
+    point_id_in_camera_list: ti.types.ndarray(ti.i32, ndim=1),  # (M)
     pixel_to_gaussians: ti.types.ndarray(ti.i32, ndim=2),  # (H*W, MAX_GAUSSIANS)
 ):
     ti.loop_config(block_dim=(TILE_WIDTH * TILE_HEIGHT))
@@ -471,7 +472,7 @@ def gaussian_point_rasterisation(
                 accumulated_color += color * alpha * T_i
 
                 point_offset = point_offset_with_sort_key[idx_point_offset_with_sort_key]
-                point_id = point_in_camera[point_offset]
+                point_id = point_id_in_camera_list[point_offset]
 
                 # Kaamiiaar
                 if valid_point_count < MAX_GAUSSIANS:
@@ -1027,6 +1028,7 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
                         
                         # Kaamiiaar
                         pixel_to_gaussians=pixel_to_gaussians,
+                        point_id_in_camera_list=point_id_in_camera_list,
                     )
                 ctx.save_for_backward(
                     pointcloud,
