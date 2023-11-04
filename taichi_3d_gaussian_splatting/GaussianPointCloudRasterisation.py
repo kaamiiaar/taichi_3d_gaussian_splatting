@@ -1032,7 +1032,7 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
                         # Kaamiiaar
                         pixel_to_gaussians=pixel_to_gaussians,
                         point_id_in_camera_list=point_id_in_camera_list,
-                        alpha_values,
+                        alpha_values=alpha_values,
                     )
                 ctx.save_for_backward(
                     pointcloud,
