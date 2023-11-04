@@ -20,7 +20,7 @@ from typing import List, Tuple, Optional, Callable, Union
 from dataclass_wizard import YAMLWizard
 
 # Kaamiiaar
-MAX_GAUSSIANS = 10
+MAX_GAUSSIANS = 221
 
 mat4x4f = ti.types.matrix(n=4, m=4, dtype=ti.f32)
 mat4x3f = ti.types.matrix(n=4, m=3, dtype=ti.f32)
@@ -1061,7 +1061,7 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
                 # rasterized_image.requires_grad_(True)
 
                 # Kaamiiaar
-                return rasterized_image, rasterized_depth, pixel_valid_point_count, pixel_to_gaussians
+                return rasterized_image, rasterized_depth, pixel_valid_point_count, pixel_to_gaussians, alpha_values
 
             @staticmethod
             def backward(ctx, grad_rasterized_image, grad_rasterized_depth, grad_pixel_valid_point_count):
