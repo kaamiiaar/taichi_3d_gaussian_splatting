@@ -470,9 +470,12 @@ def gaussian_point_rasterisation(
                 offset_of_last_effective_point = idx_point_offset_with_sort_key + 1
                 accumulated_color += color * alpha * T_i
 
+                point_offset = point_offset_with_sort_key[idx_point_offset_with_sort_key]
+                point_id = point_in_camera[point_offset]
+
                 # Kaamiiaar
                 if valid_point_count < MAX_GAUSSIANS:
-                    pixel_to_gaussians[pixel_offset, n_contributing_points] = offset_of_last_effective_point
+                    pixel_to_gaussians[pixel_offset, n_contributing_points] = point_id  # if doesn't work +1 to it
                     n_contributing_points += 1
 
                 if not rgb_only:
