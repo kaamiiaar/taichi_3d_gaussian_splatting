@@ -20,7 +20,7 @@ from typing import List, Tuple, Optional, Callable, Union
 from dataclass_wizard import YAMLWizard
 
 # Kaamiiaar
-MAX_GAUSSIANS = 221
+# MAX_GAUSSIANS = 221
 
 mat4x4f = ti.types.matrix(n=4, m=4, dtype=ti.f32)
 mat4x3f = ti.types.matrix(n=4, m=3, dtype=ti.f32)
@@ -805,6 +805,7 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
         grad_s_factor = 0.5
         grad_q_factor = 1.
         grad_alpha_factor = 20.
+        max_gaussian_per_pixel: int = 10
 
     @dataclass
     class GaussianPointCloudRasterisationInput:
@@ -1006,8 +1007,8 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
                 # Kamyar
                 # pixel_to_gaussians = ti.field(dtype=ti.i32, shape=(camera_info.camera_height*camera_info.camera_width, MAX_GAUSSIANS))
                 # pixel_to_gaussians = ti.Matrix(camera_info.camera_height*camera_info.camera_width, MAX_GAUSSIANS, dt=ti.i32)
-                pixel_to_gaussians = torch.zeros(size=(camera_info.camera_height*camera_info.camera_width, MAX_GAUSSIANS), dtype=torch.int32, device=pointcloud.device)
-                alpha_values = torch.zeros(size=(camera_info.camera_height*camera_info.camera_width, MAX_GAUSSIANS), dtype=torch.float32, device=pointcloud.device)
+                pixel_to_gaussians = torch.zeros(size=(camera_info.camera_height*camera_info.camera_width, self.config.max_gaussian_per_pixel), dtype=torch.int32, device=pointcloud.device)
+                alpha_values = torch.zeros(size=(camera_info.camera_height*camera_info.camera_width, self.config.max_gaussian_per_pixel), dtype=torch.float32, device=pointcloud.device)
 
                 # Step 5: render
                 if point_in_camera_sort_key.shape[0] > 0:
