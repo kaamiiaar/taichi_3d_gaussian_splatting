@@ -477,11 +477,15 @@ def gaussian_point_rasterisation(
                 point_id = point_id_in_camera_list[point_offset]
 
                 # Kaamiiaar
-                if n_contributing_points < max_gaussians_per_pixel:
-                    pixel_to_gaussians[pixel_offset, n_contributing_points] = point_id
-                    alpha_values[pixel_offset, n_contributing_points] = alpha
-                    n_contributing_points += 1
+                # if n_contributing_points < max_gaussians_per_pixel:
+                #     pixel_to_gaussians[pixel_offset, n_contributing_points] = point_id
+                #     alpha_values[pixel_offset, n_contributing_points] = alpha
+                #     n_contributing_points += 1
 
+
+                pixel_to_gaussians[pixel_offset, n_contributing_points] = point_id
+                alpha_values[pixel_offset, n_contributing_points] = alpha
+                
                 if not rgb_only:
                     # Weighted depth for all valid points.
                     depth = tile_point_depth[point_group_offset]
