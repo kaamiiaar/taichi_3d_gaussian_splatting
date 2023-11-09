@@ -811,7 +811,7 @@ class GaussianPointCloudRasterisation(torch.nn.Module):
         grad_s_factor = 0.5
         grad_q_factor = 1.
         grad_alpha_factor = 20.
-        max_gaussians_per_pixel: int = 221
+        max_gaussians_per_pixel: int = 10
 
     @dataclass
     class GaussianPointCloudRasterisationInput:
