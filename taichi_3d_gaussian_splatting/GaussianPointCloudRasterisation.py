@@ -485,6 +485,7 @@ def gaussian_point_rasterisation(
 
                 pixel_to_gaussians[pixel_offset, n_contributing_points] = point_id
                 alpha_values[pixel_offset, n_contributing_points] = alpha
+                n_contributing_points += 1
                 
                 if not rgb_only:
                     # Weighted depth for all valid points.
