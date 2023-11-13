@@ -397,9 +397,9 @@ def gaussian_point_rasterisation(
         # for idx_point_offset_with_sort_key in range(start_offset, end_offset):
         for point_group_id in range(num_point_groups):
 
-            # Kaamiiaar
-            if pixel_saturated: 
-                break       # for some reason, this doesn't change anything!
+            # # Kaamiiaar
+            # if pixel_saturated: 
+            #     break       # for some reason, this doesn't change anything!
 
             # The original implementation uses a predicate block the next update for shared memory until all threads finish the current update
             # but it is not supported by Taichi yet, and experiments show that it does not affect the performance
@@ -438,8 +438,9 @@ def gaussian_point_rasterisation(
             max_point_group_offset: ti.i32 = ti.min(
                 ti.static(TILE_WIDTH * TILE_HEIGHT), num_points_in_tile - point_group_id * ti.static(TILE_WIDTH * TILE_HEIGHT))
             for point_group_offset in range(max_point_group_offset):
-                if pixel_saturated:
-                    break
+                # if pixel_saturated:   # Kaamiiaar: not break for now
+                #     break
+
                 # forward rendering process
                 idx_point_offset_with_sort_key: ti.i32 = start_offset + \
                     point_group_id * \
@@ -473,9 +474,8 @@ def gaussian_point_rasterisation(
                 # and stop front-to-back blending before it can exceed 0.9999.
                 next_T_i = T_i * (1 - alpha)
                 # if next_T_i < 0.0001:
-                if next_T_i < 0.01: # Kaamiiaar
-                    pixel_saturated = True
-                    continue  # somehow faster than directly breaking
+                #     pixel_saturated = True
+                #     continue  # somehow faster than directly breaking
                 offset_of_last_effective_point = idx_point_offset_with_sort_key + 1
                 accumulated_color += color * alpha * T_i
 
