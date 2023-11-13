@@ -469,7 +469,8 @@ def gaussian_point_rasterisation(
                 next_T_i = T_i * (1 - alpha)
                 if next_T_i < 0.0001:
                     pixel_saturated = True
-                    continue  # somehow faster than directly breaking
+                    # continue  # somehow faster than directly breaking
+                    break
                 offset_of_last_effective_point = idx_point_offset_with_sort_key + 1
                 accumulated_color += color * alpha * T_i
 
