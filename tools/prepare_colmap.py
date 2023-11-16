@@ -13,11 +13,16 @@ parser.add_argument("--base_path", type=str, required=True, help="Path to the CO
 parser.add_argument("--image_path", type=str, required=True, help="Path to the COLMAP Image folder")
 parser.add_argument("--test_image_list_path", type=str, default=None, help="Path to the test image list")
 parser.add_argument("--output_dir", type=str, required=True, help="Path to the output folder")
+
+# Kaamiiaar
+parser.add_argument("--extension", type=str, default="jpg", help="Image extension")
+
 args = parser.parse_args()
 base_path = args.base_path
 image_path = args.image_path
 output_dir = args.output_dir
 test_image_list_path = args.test_image_list_path
+extension = args.extension
 # %%
 def read_images_txt(file):
     with open(file, 'r') as f:
@@ -267,6 +272,11 @@ for name, image in images.items():
     R[3, 3] = 1.0
     T_pointcloud_camera = np.linalg.inv(R)
     K = camera['K']
+
+    # Kaamiiaar
+    if extension != "jpg":
+        name = name.replace(".jpg", f".{extension}")
+
     # Construct the JSON data
     image_full_path = os.path.join(image_path, name)
     data.append({
